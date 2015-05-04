@@ -1,0 +1,62 @@
+@{
+    ViewBag.Title = "Accounts";
+    Layout = "~/Views/shared/_BootstrapLayout.basic.cshtml";
+}
+
+@using Web.BootstrapSupport
+@using System.Collections
+@using System.Collections.Generic
+@using Config.Model
+@model IEnumerable <Account>
+<h4>Accounts</h4>
+<form method="post" action="Accounts/Change_db">
+<table id="accounts" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
+    <caption></caption>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Db server</th>
+        </tr>
+    </thead>
+    @foreach (var account in Model)
+    {
+        <tr>
+            <td>
+                @account.Name
+            </td>
+            <td>
+                <select  name=db id="db" size=1 required>
+                    <option value=@account.Db selected>@account.Db</option>
+                    @foreach (var server in ViewBag.Servers)
+                    {
+                        bool db_role = (server.Roles as IList).Contains("db");
+                        bool dc = (server.Id).Contains(ViewBag.filter);
+                        if (db_role && dc) 
+                            {
+                                <option value=@server.Id>@server.Id</option>
+                            }
+                    }
+                </select>
+            </td>
+            <td>
+                <input type="hidden" name="name" value=@account.Name />
+                <input type="submit" value="Change" />
+            </td>
+        </tr>
+    }
+</table>
+</form>
+<form method="post" action="" name="filter" id="filter">
+   
+    @{
+        if (ViewBag.filter == "dal")
+        {
+            <p><input type="checkbox" name="filter" value="dal" onchange="$('#filter').submit();"  checked > Dal filter</p>
+        }
+        else
+        {
+            <p><input type="checkbox" name="filter" value="dal" onchange="$('#filter').submit();" > Dal filter</p>      
+        }        
+    }
+</form>
+
